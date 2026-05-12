@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Career Genesis - Top 3 Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --accent-color: #00f2fe;
+            --secondary-color: #4facfe;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: white;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%; max-width: 600px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+            text-align: center; margin: 20px;
+        }
+
+        /* Sliders */
+        .slider-container { margin-bottom: 25px; text-align: left; }
+        .slider-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
+        input[type=range] { width: 100%; accent-color: var(--accent-color); cursor: pointer; }
+
+        /* การ์ดผลลัพธ์ Top 3 */
+        .career-card {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: left;
+            gap: 20px;
+        }
+        
+        .career-card:first-child {
+            border: 2px solid var(--accent-color);
+            background: rgba(0, 242, 254, 0.1);
+        }
+
+        /* กราฟวงกลม (CSS Donut) */
+        .circle-graph {
+            min-width: 70px; height: 70px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+            background: conic-gradient(var(--accent-color) calc(var(--p) * 1%), rgba(255,255,255,0.1) 0);
+        }
+        .circle-graph::after {
+            content: attr(data-pct) "%";
+            position: absolute;
+            width: 55px; height: 55px;
+            background: #1a1a2e; /* สีพื้นหลังกลมข้างใน */
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; font-weight: bold;
+        }
+
+        .career-info { flex-grow: 1; }
+        .career-info h4 { margin: 0; color: var(--accent-color); font-size: 1.1rem; }
+        .career-info p { margin: 5px 0 0; font-size: 0.8rem; opacity: 0.7; line-height: 1.4; }
+
+        button {
+            width: 100%; padding: 15px; border: none; border-radius: 10px;
+            background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
+            color: white; font-weight: 600; cursor: pointer; margin-top: 10px;
+        }
+
+        .avatar { width: 60px; height: 60px; background: var(--accent-color); border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div id="reg-section" class="glass-card">
+        <h2>Career AI Genesis</h2>
+        <input type="text" id="reg-name" placeholder="ชื่อของคุณ" style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:none; background:rgba(255,255,255,0.1); color:#fff;">
+        <input type="email" id="reg-email" placeholder="อีเมล" style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:none; background:rgba(255,255,255,0.1); color:#fff;">
+        <button onclick="handleRegister()">ถัดไป</button>
+    </div>
+
+    <div id="profile-section" class="glass-card" style="display: none;">
+        <div class="avatar" id="p-initial">-</div>
+        <h3 id="p-name">นักเรียน</h3>
+        <button onclick="goToAssessment()">เริ่มวิเคราะห์ศักยภาพ</button>
+    </div>
+
+    <div id="assessment-section" class="glass-card" style="display: none;">
+        <h3>ระบุระดับทักษะ (0-10)</h3>
+        
+        <div class="slider-container">
+            <div class="slider-label"><span>ตรรกะ (Logic)</span> <b id="v-l">0</b></div>
+            <input type="range" id="i-l" min="0" max="10" value="0" oninput="document.getElementById('v-l').innerText=this.value">
+        </div>
+        <div class="slider-container">
+            <div class="slider-label"><span>สร้างสรรค์ (Creative)</span> <b id="v-c">0</b></div>
+            <input type="range" id="i-c" min="0" max="10" value="0" oninput="document.getElementById('v-c').innerText=this.value">
+        </div>
+        <div class="slider-container">
+            <div class="slider-label"><span>ดิจิทัล (Digital)</span> <b id="v-d">0</b></div>
+            <input type="range" id="i-d" min="0" max="10" value="0" oninput="document.getElementById('v-d').innerText=this.value">
+        </div>
+
+        <button onclick="runAI()" id="btn-calc">ค้นหา 3 อาชีพที่ใช่ที่สุด</button>
+
+        <div id="results-display" style="margin-top: 30px; display: none;">
+            <h4 style="margin-bottom: 20px;">🏆 3 อาชีพที่เหมาะกับคุณที่สุด:</h4>
+            <div id="career-list"></div>
+            <button onclick="location.reload()" style="background: rgba(255,255,255,0.1); font-size: 0.8rem; margin-top:20px;">เริ่มทำใหม่</button>
+        </div>
+    </div>
+
+    <script>
+        const webAppUrl = "https://script.google.com/macros/s/AKfycbxqSoaL4GQHjpoKyaZwzV1u8DQhfnLoSYacsMnDALLXsPjFqn1LMK0wvIchYuizIkkB/exec"; 
+        let careersData = [];
+        let userEmail = "";
+
+        async function fetchCareers() {
+            try {
+                const response = await fetch(webAppUrl);
+                careersData = await response.json();
+            } catch (e) { console.log("Error loading brain"); }
+        }
+        fetchCareers();
+
+        function handleRegister() {
+            const name = document.getElementById('reg-name').value;
+            userEmail = document.getElementById('reg-email').value;
+            if(!name || !userEmail) return alert("กรุณากรอกข้อมูล");
+            document.getElementById('reg-section').style.display = 'none';
+            document.getElementById('profile-section').style.display = 'block';
+            document.getElementById('p-name').innerText = name;
+            document.getElementById('p-initial').innerText = name.charAt(0).toUpperCase();
+        }
+
+        function goToAssessment() {
+            document.getElementById('profile-section').style.display = 'none';
+            document.getElementById('assessment-section').style.display = 'block';
+        }
+
+        function runAI() {
+            const uL = parseFloat(document.getElementById('i-l').value);
+            const uC = parseFloat(document.getElementById('i-c').value);
+            const uD = parseFloat(document.getElementById('i-d').value);
+
+            let results = careersData.map(item => {
+                const dist = Math.sqrt(
+                    Math.pow(uL - (parseFloat(item.logic) || 0), 2) +
+                    Math.pow(uC - (parseFloat(item.creative) || 0), 2) +
+                    Math.pow(uD - (parseFloat(item.digital) || 0), 2)
+                );
+                let pct = 100 - (dist * 5.7);
+                return { ...item, match: pct < 0 ? 0 : Math.round(pct) };
+            });
+
+            // เรียงลำดับและตัดเอาแค่ 3 อันดับแรก
+            results.sort((a, b) => b.match - a.match);
+            const top3 = results.slice(0, 3);
+
+            const list = document.getElementById('career-list');
+            list.innerHTML = "";
+            document.getElementById('results-display').style.display = 'block';
+
+            top3.forEach((career, index) => {
+                const card = `
+                    <div class="career-card">
+                        <div class="circle-graph" style="--p: ${career.match}" data-pct="${career.match}"></div>
+                        <div class="career-info">
+                            <h4>${index + 1}. ${career.name}</h4>
+                            <p>${career.description || 'วิเคราะห์ตามทักษะที่คุณเลื่อนระบุ'}</p>
+                        </div>
+                    </div>
+                `;
+                list.innerHTML += card;
+            });
+
+            // บันทึกอันดับ 1
+            fetch(webAppUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({
+                    action: "saveResult", email: userEmail,
+                    logic: uL, creative: uC, digital: uD,
+                    career: top3[0].name, score: top3[0].match
+                })
+            });
+            
+            document.getElementById('results-display').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
